@@ -1,0 +1,69 @@
+services:
+  # 1. Python Quote Microservice
+  quote-service:
+    build:
+      context: ./QuoteService
+      dockerfile: Dockerfile.quote
+    container_name: quote_microservice
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health')"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    restart: unless-stopped
+
+  # 2. Node.js API Gateway
+  api-gateway:
+    build:
+      context: ./ApiGateway
+      dockerfile: Dockerfile.gateway
+    container_name: node_gateway
+    environment:
+      QUOTES_API: http://quote-service:5000
+
+    ports:
+      - "3001:3000"
+
+    depends_on:
+      quote-service:
+        condition: service_healthy
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/status').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    restart: unless-stopped
+
+  # 3. Frontend Microservice
+  frontend:
+    build:
+      context: ./FrontendApplication
+      args:
+        API_GATEWAY: http://localhost:3001
+      dockerfile: Dockerfile.frontend
+    container_name: web_frontend
+    ports:
+      - "8080:80"
+
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+
+    restart: unless-stopped
