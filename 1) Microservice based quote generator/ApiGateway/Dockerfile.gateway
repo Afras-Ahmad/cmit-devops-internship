@@ -5,6 +5,8 @@ RUN corepack enable && yarn install --no-lockfile --production=true
 
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
+# npm is not required at runtime; remove its bundled dependency tree from the attack surface.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 WORKDIR /app
 COPY --from=dependencies --chown=node:node /app/node_modules ./node_modules
 COPY --chown=node:node package.json index.js ./
