@@ -1,0 +1,15 @@
+flowchart LR
+  A["Push / PR to main"] --> B["GitHub Actions"]
+  B --> C["Python lint + tests"]
+  B --> D["Gateway tests + syntax"]
+  B --> E["Frontend tests + webpack build"]
+  C --> F["Build three container images"]
+  D --> F
+  E --> F
+  F --> G["Trivy HIGH / CRITICAL scan"]
+  G -->|Pass| H{"Push to main?"}
+  G -->|Fail| X["Stop: no publish"]
+  H -->|Yes| I["GitHub OIDC"]
+  I --> J["AWS IAM role"]
+  J --> K["Amazon ECR"]
+  H -->|No: PR| L["Checks only"]

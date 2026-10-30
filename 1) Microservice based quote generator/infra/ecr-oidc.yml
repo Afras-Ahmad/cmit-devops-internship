@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Private ECR repositories and least-privilege GitHub Actions OIDC publishing role.
+Parameters:
+  GitHubOidcProviderArn:
+    Type: String
+    Description: ARN of the existing token.actions.githubusercontent.com IAM OIDC provider.
+  GitHubOwner:
+    Type: String
+    Default: Afras-Ahmad
+  GitHubRepository:
+    Type: String
+    Default: cmit-devops-internship
+  GitHubBranch:
+    Type: String
+    Default: main
+Resources:
+  QuoteServiceRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: quote-service
+      ImageTagMutability: IMMUTABLE
+      ImageScanningConfiguration: { ScanOnPush: true }
+      EncryptionConfiguration: [{ EncryptionType: AES256 }]
+  ApiGatewayRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: api-gateway
+      ImageTagMutability: IMMUTABLE
+      ImageScanningConfiguration: { ScanOnPush: true }
+      EncryptionConfiguration: [{ EncryptionType: AES256 }]
+  FrontendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: frontend
+      ImageTagMutability: IMMUTABLE
+      ImageScanningConfiguration: { ScanOnPush: true }
+      EncryptionConfiguration: [{ EncryptionType: AES256 }]
+  GitHubActionsEcrRole:
+    Type: AWS::IAM::Role
+    Properties:
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Federated: !Ref GitHubOidcProviderArn }
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepository}:ref:refs/heads/${GitHubBranch}"
+      Policies:
+        - PolicyName: EcrPushOnlyToProjectRepositories
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [ecr:GetAuthorizationToken]
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+                  - ecr:PutImage
+                  - ecr:DescribeImages
+                Resource:
+                  - !GetAtt QuoteServiceRepository.Arn
+                  - !GetAtt ApiGatewayRepository.Arn
+                  - !GetAtt FrontendRepository.Arn
+Outputs:
+  RoleArn:
+    Description: Set this as GitHub repository variable AWS_ROLE_ARN.
+    Value: !GetAtt GitHubActionsEcrRole.Arn
+  QuoteServiceUri: { Value: !GetAtt QuoteServiceRepository.RepositoryUri }
+  ApiGatewayUri: { Value: !GetAtt ApiGatewayRepository.RepositoryUri }
+  FrontendUri: { Value: !GetAtt FrontendRepository.RepositoryUri }
