@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+<title id="title">Quote Generator Container CI/CD Architecture</title>
+<desc id="desc">GitHub Actions runs quality checks, builds and scans three container images, then uses GitHub OIDC to publish verified images to Amazon ECR on main branch pushes.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker>
+  <style>
+    .h{font:700 28px Arial;fill:#0f172a}.sub{font:16px Arial;fill:#475569}
+    .t{font:700 18px Arial;fill:#0f172a}.s{font:14px Arial;fill:#334155}
+    .small{font:13px Arial;fill:#475569}.line{stroke:#64748b;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+    .panel{fill:#f8fafc;stroke:#94a3b8;stroke-width:2;rx:18}
+    .blue{fill:#eff6ff;stroke:#3b82f6;stroke-width:2;rx:14}
+    .green{fill:#ecfdf5;stroke:#10b981;stroke-width:2;rx:14}
+    .amber{fill:#fffbeb;stroke:#d97706;stroke-width:2;rx:14}
+    .red{fill:#fff1f2;stroke:#e11d48;stroke-width:2;rx:14}
+  </style>
+</defs>
+<rect width="1400" height="820" fill="#ffffff"/>
+<text x="60" y="58" class="h">Quote Generator — Container CI/CD</text>
+<text x="60" y="88" class="sub">Quality gates → build → vulnerability scan → authenticated ECR publication</text>
+<rect x="55" y="130" width="1290" height="625" class="panel"/>
+<text x="85" y="170" class="t">GitHub repository</text>
+<rect x="85" y="195" width="230" height="105" class="blue"/>
+<text x="200" y="232" text-anchor="middle" class="t">Push / Pull Request</text>
+<text x="200" y="260" text-anchor="middle" class="s">main branch workflow</text>
+<rect x="380" y="185" width="300" height="350" class="blue"/>
+<text x="530" y="220" text-anchor="middle" class="t">GitHub Actions</text>
+<rect x="410" y="245" width="240" height="65" class="green"/>
+<text x="530" y="272" text-anchor="middle" class="t">Quality gates</text>
+<text x="530" y="293" text-anchor="middle" class="small">Python / Node tests + lint</text>
+<rect x="410" y="335" width="240" height="65" class="green"/>
+<text x="530" y="362" text-anchor="middle" class="t">Build 3 images</text>
+<text x="530" y="383" text-anchor="middle" class="small">BuildKit / multi-stage Docker</text>
+<rect x="410" y="425" width="240" height="75" class="amber"/>
+<text x="530" y="454" text-anchor="middle" class="t">Trivy security scan</text>
+<text x="530" y="478" text-anchor="middle" class="small">HIGH / CRITICAL gate + SBOM</text>
+<rect x="745" y="205" width="250" height="105" class="red"/>
+<text x="870" y="242" text-anchor="middle" class="t">PR checks only</text>
+<text x="870" y="270" text-anchor="middle" class="s">No AWS publish permissions</text>
+<rect x="745" y="365" width="250" height="125" class="green"/>
+<text x="870" y="402" text-anchor="middle" class="t">GitHub OIDC token</text>
+<text x="870" y="430" text-anchor="middle" class="s">Short-lived identity</text>
+<text x="870" y="456" text-anchor="middle" class="small">Only main branch subject</text>
+<rect x="1060" y="365" width="235" height="125" class="amber"/>
+<text x="1177" y="402" text-anchor="middle" class="t">AWS IAM role</text>
+<text x="1177" y="430" text-anchor="middle" class="s">Least-privilege ECR push</text>
+<text x="1177" y="456" text-anchor="middle" class="small">No stored AWS keys</text>
+<rect x="1060" y="550" width="235" height="145" class="green"/>
+<text x="1177" y="587" text-anchor="middle" class="t">Amazon ECR</text>
+<text x="1177" y="617" text-anchor="middle" class="s">quote-service</text>
+<text x="1177" y="641" text-anchor="middle" class="s">api-gateway</text>
+<text x="1177" y="665" text-anchor="middle" class="s">frontend</text>
+<path d="M315 247 H380" class="line"/>
+<path d="M530 310 V335" class="line"/>
+<path d="M530 400 V425" class="line"/>
+<path d="M650 465 H700 V257 H745" class="line"/>
+<text x="705" y="242" class="small">PR</text>
+<path d="M650 465 H710 V427 H745" class="line"/>
+<text x="702" y="410" class="small">main + pass</text>
+<path d="M995 427 H1060" class="line"/>
+<path d="M1177 490 V550" class="line"/>
+<text x="85" y="620" class="t">Images are tagged with the Git commit SHA</text>
+<text x="85" y="650" class="s">The exact image artifacts scanned by Trivy are the ones promoted to ECR.</text>
+<text x="85" y="685" class="small">This pipeline publishes images; it does not deploy them to ECS or EKS.</text>
+</svg>
