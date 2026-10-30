@@ -10,8 +10,18 @@
   "author": "Afras Ahmad",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.18.0",
-    "cors": "^2.8.4",
-    "express": "^4.16.3"
+    "axios": "1.15.1",
+    "cors": "2.8.5",
+    "express": "4.21.2"
+  },
+  "resolutions": {
+    "body-parser": "1.20.9",
+    "brace-expansion": "2.1.6",
+    "follow-redirects": "1.15.11",
+    "ip-address": "10.3.1",
+    "path-to-regexp": "0.1.13",
+    "picomatch": "4.0.4",
+    "proxy-addr": "2.0.8",
+    "qs": "6.14.0"
   }
 }
