@@ -48,7 +48,7 @@ jobs:
         working-directory: 1) Microservice based quote generator/ApiGateway
         run: |
           corepack enable
-          yarn install --frozen-lockfile
+          yarn install --no-lockfile
       - name: API Gateway tests
         working-directory: 1) Microservice based quote generator/ApiGateway
         run: yarn test
