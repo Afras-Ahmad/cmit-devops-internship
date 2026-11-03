@@ -7,9 +7,17 @@ Parameters:
   GitHubOwner:
     Type: String
     Default: Afras-Ahmad
+  GitHubOwnerId:
+    Type: String
+    Default: "60088022"
+    Description: Immutable numeric GitHub owner ID used in the OIDC subject claim.
   GitHubRepository:
     Type: String
     Default: cmit-devops-internship
+  GitHubRepositoryId:
+    Type: String
+    Default: "1363587627"
+    Description: Immutable numeric GitHub repository ID used in the OIDC subject claim.
   GitHubBranch:
     Type: String
     Default: main
@@ -48,7 +56,7 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepository}:ref:refs/heads/${GitHubBranch}"
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}@${GitHubOwnerId}/${GitHubRepository}@${GitHubRepositoryId}:ref:refs/heads/${GitHubBranch}"
       Policies:
         - PolicyName: EcrPushOnlyToProjectRepositories
           PolicyDocument:
