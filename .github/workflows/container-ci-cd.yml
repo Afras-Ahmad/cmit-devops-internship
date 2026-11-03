@@ -120,7 +120,7 @@ jobs:
         with:
           name: image-${{ matrix.service }}-${{ github.sha }}
           path: images/${{ matrix.service }}.tar
-          retention-days: 2
+          retention-days: 7
 
   publish-to-ecr:
     name: Publish scanned images to ECR
